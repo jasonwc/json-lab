@@ -1,0 +1,37 @@
+# Secrets - NEVER commit these
+*.secret
+*.secret.yaml
+*-secret.yaml
+secrets/
+.env
+.env.*
+.envrc
+
+# VPN credentials
+vpn-credentials.yaml
+vpn-config/
+
+# Plex claim token
+plex-claim-secret.yaml
+
+# k3s token
+k3s-token
+/etc/k3s/token
+
+# NixOS build artifacts
+result
+result-*
+
+# Nix flake lock (uncomment if you want to pin)
+# nixos/flake.lock
+
+# Editor
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

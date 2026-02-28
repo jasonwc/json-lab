@@ -1,0 +1,28 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - namespace.yaml
+  # kube-state-metrics (upstream, deploys into kube-system)
+  - https://raw.githubusercontent.com/kubernetes/kube-state-metrics/v2.13.0/examples/standard/cluster-role.yaml
+  - https://raw.githubusercontent.com/kubernetes/kube-state-metrics/v2.13.0/examples/standard/cluster-role-binding.yaml
+  - https://raw.githubusercontent.com/kubernetes/kube-state-metrics/v2.13.0/examples/standard/deployment.yaml
+  - https://raw.githubusercontent.com/kubernetes/kube-state-metrics/v2.13.0/examples/standard/service.yaml
+  - https://raw.githubusercontent.com/kubernetes/kube-state-metrics/v2.13.0/examples/standard/service-account.yaml
+  # Node exporter
+  - node-exporter/daemonset.yaml
+  - node-exporter/service.yaml
+  # Prometheus
+  - prometheus/serviceaccount.yaml
+  - prometheus/clusterrole.yaml
+  - prometheus/clusterrolebinding.yaml
+  - prometheus/configmap.yaml
+  - prometheus/deployment.yaml
+  - prometheus/service.yaml
+  - prometheus/ingress.yaml
+  # Grafana
+  - grafana/deployment.yaml
+  - grafana/service.yaml
+  - grafana/ingress.yaml
+  - grafana/configmap-datasources.yaml
+  - grafana/configmap-dashboards.yaml
