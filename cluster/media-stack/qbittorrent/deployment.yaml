@@ -43,6 +43,8 @@ spec:
                   key: OPENVPN_PASSWORD
             - name: KILL_SWITCH
               value: "on"
+            - name: VPN_PORT_FORWARDING
+              value: "on"
             - name: FIREWALL_VPN_INPUT_PORTS
               value: "8080"
           securityContext:
