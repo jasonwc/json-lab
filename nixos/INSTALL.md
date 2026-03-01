@@ -177,16 +177,36 @@ openssh.authorizedKeys.keys = [
 
 ### 7d. Clone the repo and deploy
 
-```bash
-# On the node
-git clone <your-json-lab-repo-url> ~/json-lab
-cd ~/json-lab
+Git isn't available on the base install. Use `nix-shell` to get it temporarily:
 
-# Deploy the flake config
+```bash
+# On the node — get git in a temporary shell
+nix-shell -p git
+
+# Clone and deploy
+git clone https://github.com/jasonwc/json-lab.git ~/json-lab
+cd ~/json-lab
 sudo nixos-rebuild switch --flake ./nixos#json-lab-1
 ```
 
-After this, the node will have its static IP, hostname, and all the settings from the flake. SSH password auth will be disabled — make sure your SSH key is in place before deploying.
+After `nixos-rebuild switch`, git (and all other packages in `common.nix`) will be permanently installed.
+
+### 7e. Reboot and verify ethernet
+
+```bash
+sudo reboot
+```
+
+After reboot, the r8125 driver should load and the ethernet NIC will be available. Verify:
+
+```bash
+ip link  # look for the ethernet interface (e.g. enp1s0)
+ip addr  # confirm the static IP is assigned
+```
+
+If the ethernet interface name is NOT `enp1s0`, update the node's nix config to match, commit, and re-run `nixos-rebuild switch`.
+
+**Important:** After this deploy, SSH password auth is disabled. Make sure your SSH key was added to `common.nix` before deploying, or you'll need physical access to recover.
 
 ## Per-Node Notes
 
@@ -207,9 +227,11 @@ Do everything above, plus:
 
 3. **Get the UUID** and update `json-lab-1.nix`:
    ```bash
-   blkid /dev/sda1
+   sudo blkid /dev/sda1
    ```
    Replace `REPLACE-WITH-ACTUAL-UUID` in the config with the actual UUID.
+
+   **Note:** The WD Elements drive ships as NTFS. Format it to ext4 before use.
 
 4. **Create the media directory** after the drive is mounted:
    ```bash
@@ -268,3 +290,43 @@ json-lab-3   Ready    <none>                 XXm   v1.xx.x+k3s1
 
 1. **json-lab-1 first** — it runs the k3s control plane and generates the join token
 2. **json-lab-2 and json-lab-3** — can be done in parallel after json-lab-1 is up
+
+## Debugging
+
+Issues encountered during the initial json-lab-1 install and their solutions.
+
+### No network in the installer
+
+The GMKTek Mini PCs use a **Realtek RTL8125 2.5GbE** NIC (PCI ID `10ec:8125`). The NixOS installer kernel does not include a working driver for it — the in-kernel `r8169` driver claims the device but does not bring up the interface.
+
+**Workaround:** Use WiFi during installation (`nmcli device wifi connect "SSID" password "pass"`). The flake config includes the out-of-tree `r8125` driver package, so ethernet works after the first `nixos-rebuild switch` and reboot.
+
+**How we diagnosed it:**
+```bash
+cat /proc/bus/pci/devices | grep 8125   # confirmed Realtek RTL8125
+ls /sys/class/net/                       # only lo and wlp1s0 (no ethernet)
+sudo modprobe r8169                      # loaded but no new interface appeared
+```
+
+### "Not superuser" errors in the installer
+
+The NixOS installer boots as the `nixos` user, not root. Run `sudo -i` first before partitioning or installing.
+
+### lspci / pciutils not found
+
+The base NixOS install doesn't include `pciutils`. Use `nix-shell -p pciutils` for a temporary install, or it'll be available after deploying the flake (included in `common.nix`).
+
+### FAT32 /boot "world accessible" warning
+
+During `nixos-install`, you may see a warning about `/boot` being world-accessible. This is informational only — it's normal for FAT32 EFI partitions which don't support Unix permissions. Safe to ignore.
+
+### git not available on fresh install
+
+The base NixOS install doesn't include git. Use `nix-shell -p git` to get it temporarily for the initial clone. After `nixos-rebuild switch`, git is permanently installed via `common.nix`.
+
+### WD Elements 8TB drive is NTFS
+
+The drive ships formatted as NTFS. Reformat to ext4 before use:
+```bash
+sudo mkfs.ext4 -L storage /dev/sda1
+```

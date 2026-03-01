@@ -12,8 +12,7 @@
   boot.loader.efi.canTouchEfiVariables = true;
 
   # ---------- Kernel ----------
-  boot.extraModulePackages = with config.boot.kernelPackages; [ r8125 ];
-  boot.kernelModules = [ "br_netfilter" "overlay" "r8125" ];
+  boot.kernelModules = [ "br_netfilter" "overlay" ];
 
   boot.kernel.sysctl = {
     "net.bridge.bridge-nf-call-iptables"  = 1;
