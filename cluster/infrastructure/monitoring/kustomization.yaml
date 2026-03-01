@@ -3,12 +3,12 @@ kind: Kustomization
 
 resources:
   - namespace.yaml
-  # kube-state-metrics (upstream, deploys into kube-system)
-  - https://raw.githubusercontent.com/kubernetes/kube-state-metrics/v2.13.0/examples/standard/cluster-role.yaml
-  - https://raw.githubusercontent.com/kubernetes/kube-state-metrics/v2.13.0/examples/standard/cluster-role-binding.yaml
-  - https://raw.githubusercontent.com/kubernetes/kube-state-metrics/v2.13.0/examples/standard/deployment.yaml
-  - https://raw.githubusercontent.com/kubernetes/kube-state-metrics/v2.13.0/examples/standard/service.yaml
-  - https://raw.githubusercontent.com/kubernetes/kube-state-metrics/v2.13.0/examples/standard/service-account.yaml
+  # kube-state-metrics (upstream v2.13.0, deploys into kube-system)
+  - kube-state-metrics/cluster-role.yaml
+  - kube-state-metrics/cluster-role-binding.yaml
+  - kube-state-metrics/deployment.yaml
+  - kube-state-metrics/service.yaml
+  - kube-state-metrics/service-account.yaml
   # Node exporter
   - node-exporter/daemonset.yaml
   - node-exporter/service.yaml

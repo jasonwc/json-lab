@@ -1,19 +1,72 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: infrastructure
+  name: metallb
   namespace: argocd
 spec:
   project: default
   source:
     repoURL: https://github.com/jasonwc/json-lab.git
     targetRevision: HEAD
-    path: cluster/infrastructure
-    directory:
-      recurse: true
+    path: cluster/infrastructure/metallb
   destination:
     server: https://kubernetes.default.svc
-    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ingress-nginx
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/jasonwc/json-lab.git
+    targetRevision: HEAD
+    path: cluster/infrastructure/ingress-nginx
+  destination:
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nfs-storage
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/jasonwc/json-lab.git
+    targetRevision: HEAD
+    path: cluster/infrastructure/nfs-storage
+    directory:
+      recurse: false
+  destination:
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: monitoring
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/jasonwc/json-lab.git
+    targetRevision: HEAD
+    path: cluster/infrastructure/monitoring
+  destination:
+    server: https://kubernetes.default.svc
   syncPolicy:
     automated:
       prune: true
