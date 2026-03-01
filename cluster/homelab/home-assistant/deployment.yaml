@@ -15,6 +15,44 @@ spec:
       labels:
         app: home-assistant
     spec:
+      initContainers:
+        - name: setup-config
+          image: busybox:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              if [ ! -f /config/configuration.yaml ]; then
+                cat > /config/configuration.yaml <<'CONF'
+              homeassistant:
+                name: Home
+                unit_system: imperial
+                time_zone: America/New_York
+
+              http:
+                use_x_forwarded_for: true
+                trusted_proxies:
+                  - 10.42.0.0/16
+                  - 10.43.0.0/16
+
+              default_config:
+              CONF
+              else
+                # Ensure http config exists for reverse proxy
+                if ! grep -q "trusted_proxies" /config/configuration.yaml; then
+                  cat >> /config/configuration.yaml <<'CONF'
+
+              http:
+                use_x_forwarded_for: true
+                trusted_proxies:
+                  - 10.42.0.0/16
+                  - 10.43.0.0/16
+              CONF
+                fi
+              fi
+          volumeMounts:
+            - name: config
+              mountPath: /config
       containers:
         - name: home-assistant
           image: ghcr.io/home-assistant/home-assistant:stable

@@ -33,6 +33,9 @@ spec:
           image: ghcr.io/gethomepage/homepage:latest
           ports:
             - containerPort: 3000
+          env:
+            - name: HOMEPAGE_ALLOWED_HOSTS
+              value: "home.json.lab"
           volumeMounts:
             - name: config
               mountPath: /app/config
