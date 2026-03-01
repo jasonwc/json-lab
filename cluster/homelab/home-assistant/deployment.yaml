@@ -15,8 +15,6 @@ spec:
       labels:
         app: home-assistant
     spec:
-      hostNetwork: true
-      dnsPolicy: ClusterFirstWithHostNet
       initContainers:
         - name: setup-config
           image: busybox:latest
