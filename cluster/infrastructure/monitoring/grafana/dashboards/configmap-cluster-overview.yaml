@@ -144,6 +144,10 @@ data:
             {
               "expr": "node_hwmon_temp_celsius{chip=~\"nvme.*\",sensor=\"temp1\"}",
               "legendFormat": "{{instance}} NVMe"
+            },
+            {
+              "expr": "node_hwmon_temp_celsius{job=\"firewalla\",chip=\"platform_coretemp_0\",sensor=\"temp1\"}",
+              "legendFormat": "Firewalla CPU"
             }
           ]
         },

@@ -101,3 +101,10 @@ data:
       - job_name: qbittorrent
         static_configs:
           - targets: ['qbittorrent-exporter.media.svc:8000']
+
+      # Firewalla Gold Pro (router)
+      - job_name: firewalla
+        static_configs:
+          - targets: ['192.168.124.1:9100']
+            labels:
+              instance: firewalla
