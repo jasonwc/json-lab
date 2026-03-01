@@ -111,9 +111,75 @@ data:
           ]
         },
         {
+          "title": "Node Temperature",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
+          "datasource": { "type": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "celsius",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "yellow", "value": 70 },
+                  { "color": "red", "value": 85 }
+                ]
+              },
+              "custom": {
+                "thresholdsStyle": { "mode": "line" }
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "tooltip": { "mode": "multi" },
+            "legend": { "displayMode": "table", "calcs": ["mean", "lastNotNull", "max"] }
+          },
+          "targets": [
+            {
+              "expr": "node_hwmon_temp_celsius{chip=~\"pci.*\"}",
+              "legendFormat": "{{instance}} CPU"
+            },
+            {
+              "expr": "node_hwmon_temp_celsius{chip=~\"nvme.*\",sensor=\"temp1\"}",
+              "legendFormat": "{{instance}} NVMe"
+            }
+          ]
+        },
+        {
+          "title": "NFS Storage Usage",
+          "type": "gauge",
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 },
+          "datasource": { "type": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percentunit",
+              "min": 0,
+              "max": 1,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "yellow", "value": 0.75 },
+                  { "color": "red", "value": 0.9 }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {},
+          "targets": [
+            {
+              "expr": "1 - (node_filesystem_avail_bytes{mountpoint=\"/mnt/storage\"} / node_filesystem_size_bytes{mountpoint=\"/mnt/storage\"})",
+              "legendFormat": "8TB Drive"
+            }
+          ]
+        },
+        {
           "title": "Pods by Status",
           "type": "stat",
-          "gridPos": { "h": 4, "w": 24, "x": 0, "y": 16 },
+          "gridPos": { "h": 4, "w": 24, "x": 0, "y": 24 },
           "datasource": { "type": "prometheus" },
           "fieldConfig": {
             "defaults": {},
@@ -142,7 +208,7 @@ data:
         {
           "title": "Container CPU Usage by Namespace",
           "type": "timeseries",
-          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 20 },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 28 },
           "datasource": { "type": "prometheus" },
           "fieldConfig": {
             "defaults": { "unit": "short" },
@@ -162,7 +228,7 @@ data:
         {
           "title": "Container Memory by Namespace",
           "type": "timeseries",
-          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 20 },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 28 },
           "datasource": { "type": "prometheus" },
           "fieldConfig": {
             "defaults": { "unit": "bytes" },
