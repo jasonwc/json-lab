@@ -75,7 +75,7 @@ data:
     - Infrastructure:
         - ArgoCD:
             href: http://argocd.json.lab
-            icon: argocd.png
+            icon: argo-cd.png
             description: GitOps deployments
         - Home Assistant:
             href: http://ha.json.lab
