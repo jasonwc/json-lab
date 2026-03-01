@@ -8,11 +8,11 @@ json-lab — GitOps-managed k3s homelab running on 3 GMKTek Mini PCs (Ryzen 5 35
 
 ## Architecture
 
-- **3 nodes**: node1 (control plane + worker + 8TB storage), node2/node3 (workers)
+- **3 nodes**: json-lab-1 (control plane + worker + 8TB storage), json-lab-2/json-lab-3 (workers)
 - **OS**: NixOS (flake-based configs in `nixos/`)
 - **Orchestration**: k3s (Traefik disabled, using ingress-nginx)
 - **GitOps**: ArgoCD with app-of-apps pattern
-- **Storage**: 8TB external drive on node1, exported via NFS to the cluster
+- **Storage**: 8TB external drive on json-lab-1, exported via NFS to the cluster
 - **Workloads**: Media stack (Jellyfin, Plex, Sonarr, Radarr, Prowlarr, qBittorrent+gluetun VPN)
 
 ## Repository Layout
@@ -40,6 +40,6 @@ cluster/
 - Secrets are NOT committed to the repo; created manually or via SOPS (future)
 - NFS PVs for shared media storage; local-path PVCs for per-app config
 - VPN sidecar (gluetun) on qBittorrent; all torrent traffic exits via VPN
-- Node hostnames: `node1`, `node2`, `node3`
+- Node hostnames: `json-lab-1`, `json-lab-2`, `json-lab-3`
 - Media namespace: `media`
 - Domain pattern: `<app>.json.lab` for ingresses

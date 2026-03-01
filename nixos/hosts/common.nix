@@ -4,11 +4,16 @@
   # ---------- Nix settings ----------
   nix.settings = {
     experimental-features = [ "nix-command" "flakes" ];
-    trusted-users = [ "root" "jason" ];
+    trusted-users = [ "root" "jasonwc" ];
   };
 
-  # ---------- Boot / kernel ----------
-  boot.kernelModules = [ "br_netfilter" "overlay" ];
+  # ---------- Boot ----------
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
+
+  # ---------- Kernel ----------
+  boot.extraModulePackages = with config.boot.kernelPackages; [ r8125 ];
+  boot.kernelModules = [ "br_netfilter" "overlay" "r8125" ];
 
   boot.kernel.sysctl = {
     "net.bridge.bridge-nf-call-iptables"  = 1;
@@ -27,7 +32,7 @@
   # ---------- Networking (common) ----------
   networking = {
     nameservers = [ "1.1.1.1" "8.8.8.8" ];
-    defaultGateway = "192.168.1.1";
+    defaultGateway = "192.168.124.1";
 
     firewall = {
       enable = true;
@@ -53,13 +58,12 @@
   };
 
   # ---------- Users ----------
-  users.users.jason = {
+  users.users.jasonwc = {
     isNormalUser = true;
-    description  = "Jason";
+    description  = "jasonwc";
     extraGroups  = [ "wheel" "networkmanager" ];
     openssh.authorizedKeys.keys = [
-      # TODO: paste your public SSH key here
-      # "ssh-ed25519 AAAA..."
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOog27hZwOVc7DKG1nSZ/ZkXrKS0NmgCyQQuNeWj/FcY"
     ];
   };
 
@@ -71,6 +75,7 @@
     curl
     htop
     git
+    pciutils
     nfs-utils
     k9s
     kubectl

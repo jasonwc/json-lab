@@ -2,25 +2,26 @@
 
 {
   imports = [
+    ./hardware-json-lab-1.nix
     ../modules/k3s.nix
     ../modules/nfs-server.nix
   ];
 
   # ---------- Hostname ----------
-  networking.hostName = "node1";
+  networking.hostName = "json-lab-1";
 
   # ---------- Static IP ----------
   networking.interfaces.enp1s0 = {
     useDHCP = false;
     ipv4.addresses = [{
-      address = "192.168.1.10";
+      address = "192.168.124.10";
       prefixLength = 24;
     }];
   };
 
   # ---------- 8TB external storage ----------
   fileSystems."/mnt/storage" = {
-    device = "/dev/disk/by-uuid/REPLACE-WITH-ACTUAL-UUID";
+    device = "/dev/disk/by-uuid/e209c112-d618-4343-8645-1e2c9297cb27";
     fsType = "ext4";
     options = [ "defaults" "nofail" ];
   };
@@ -32,8 +33,8 @@
     extraFlags = [
       "--disable=traefik"
       "--write-kubeconfig-mode=644"
-      "--tls-san=192.168.1.10"
-      "--node-ip=192.168.1.10"
+      "--tls-san=192.168.124.10"
+      "--node-ip=192.168.124.10"
     ];
   };
 
@@ -41,6 +42,6 @@
   homelab.nfs-server = {
     enable = true;
     exportPath     = "/mnt/storage/media";
-    allowedNetwork = "192.168.1.0/24";
+    allowedNetwork = "192.168.124.0/24";
   };
 }

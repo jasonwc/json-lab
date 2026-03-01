@@ -20,19 +20,19 @@
     in
     {
       nixosConfigurations = {
-        node1 = mkNode {
-          hostname = "node1";
-          hostConfig = ./hosts/node1.nix;
+        json-lab-1 = mkNode {
+          hostname = "json-lab-1";
+          hostConfig = ./hosts/json-lab-1.nix;
         };
 
-        node2 = mkNode {
-          hostname = "node2";
-          hostConfig = ./hosts/node2.nix;
+        json-lab-2 = mkNode {
+          hostname = "json-lab-2";
+          hostConfig = ./hosts/json-lab-2.nix;
         };
 
-        node3 = mkNode {
-          hostname = "node3";
-          hostConfig = ./hosts/node3.nix;
+        json-lab-3 = mkNode {
+          hostname = "json-lab-3";
+          hostConfig = ./hosts/json-lab-3.nix;
         };
       };
     };

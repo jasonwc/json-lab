@@ -6,19 +6,19 @@ GitOps-managed k3s homelab running on 3 GMKTek Mini PCs (Ryzen 5 3500) with NixO
 
 | Node  | Role                  | IP            | Notes                      |
 |-------|-----------------------|---------------|----------------------------|
-| node1 | Control plane + worker| 192.168.1.10  | 8TB external drive, NFS server |
-| node2 | Worker                | 192.168.1.11  |                            |
-| node3 | Worker                | 192.168.1.12  |                            |
+| json-lab-1 | Control plane + worker| 192.168.124.10  | 8TB external drive, NFS server |
+| json-lab-2 | Worker                | 192.168.124.11  |                            |
+| json-lab-3 | Worker                | 192.168.124.12  |                            |
 
 ## Stack
 
 - **OS**: NixOS (flake-based)
 - **Orchestration**: k3s
 - **GitOps**: ArgoCD (app-of-apps pattern)
-- **Load Balancer**: MetalLB (L2 mode, IP pool 192.168.1.200-210)
+- **Load Balancer**: MetalLB (L2 mode, IP pool 192.168.124.200-210)
 - **Ingress**: ingress-nginx (gets a MetalLB IP)
 - **Monitoring**: Prometheus + Grafana + node-exporter + kube-state-metrics
-- **Storage**: NFS from node1's 8TB drive
+- **Storage**: NFS from json-lab-1's 8TB drive
 - **Router**: Firewalla Gold Pro (DHCP, DNS, firewall, WireGuard VPN)
 
 ## Network Architecture
@@ -28,15 +28,15 @@ Internet
   │
   ▼
 Firewalla Gold Pro (router/firewall/DNS/WireGuard)
-  │  DNS: *.json.lab → 192.168.1.200 (MetalLB ingress IP)
+  │  DNS: *.json.lab → 192.168.124.200 (MetalLB ingress IP)
   │  WireGuard VPN server for remote access
   │
-  ├─ 192.168.1.10  node1 (control plane + worker + NFS)
-  ├─ 192.168.1.11  node2 (worker)
-  └─ 192.168.1.12  node3 (worker)
+  ├─ 192.168.124.10  json-lab-1 (control plane + worker + NFS)
+  ├─ 192.168.124.11  json-lab-2 (worker)
+  └─ 192.168.124.12  json-lab-3 (worker)
 
 Ingress path:
-  Client → Firewalla DNS → 192.168.1.200 (MetalLB VIP)
+  Client → Firewalla DNS → 192.168.124.200 (MetalLB VIP)
     → ingress-nginx (Host header routing)
       → ClusterIP Service → Pod
 
@@ -50,18 +50,18 @@ In the Firewalla app: **Services → Custom DNS Rules**, add a wildcard entry:
 
 | Domain | IP |
 |--------|-----|
-| `*.json.lab` | `192.168.1.200` |
+| `*.json.lab` | `192.168.124.200` |
 
 Or via SSH on the Firewalla, add to dnsmasq config:
 ```
-address=/json.lab/192.168.1.200
+address=/json.lab/192.168.124.200
 ```
 
 **Note:** Disable DNS-over-HTTPS (DoH) for the LAN network, as DoH bypasses local DNS entries.
 
 ### MetalLB IP Pool
 
-MetalLB runs in L2 mode and assigns IPs from `192.168.1.200-192.168.1.210`. Reserve this range in your Firewalla's DHCP settings to avoid conflicts.
+MetalLB runs in L2 mode and assigns IPs from `192.168.124.200-192.168.124.210`. Reserve this range in your Firewalla's DHCP settings to avoid conflicts.
 
 ## Workloads
 
@@ -81,7 +81,7 @@ MetalLB runs in L2 mode and assigns IPs from `192.168.1.200-192.168.1.210`. Rese
 nix flake check ./nixos
 
 # Deploy to a node (run on the target node)
-sudo nixos-rebuild switch --flake ./nixos#node1
+sudo nixos-rebuild switch --flake ./nixos#json-lab-1
 ```
 
 ### 2. Bootstrap the cluster
@@ -89,10 +89,10 @@ sudo nixos-rebuild switch --flake ./nixos#node1
 After k3s is running on all nodes:
 
 ```bash
-# Copy kubeconfig from node1
-scp jason@192.168.1.10:/etc/rancher/k3s/k3s.yaml ~/.kube/config
+# Copy kubeconfig from json-lab-1
+scp jasonwc@192.168.124.10:/etc/rancher/k3s/k3s.yaml ~/.kube/config
 # Update the server address
-sed -i 's/127.0.0.1/192.168.1.10/' ~/.kube/config
+sed -i 's/127.0.0.1/192.168.124.10/' ~/.kube/config
 
 # Deploy MetalLB (provides LoadBalancer IPs)
 kubectl apply -k cluster/infrastructure/metallb/
@@ -131,7 +131,7 @@ kubectl port-forward svc/argocd-server -n argocd 8080:443
 ## Storage Layout
 
 ```
-8TB External Drive (node1:/mnt/storage)
+8TB External Drive (json-lab-1:/mnt/storage)
 ├── media/
 │   ├── movies/        ← Radarr downloads, Plex/Jellyfin reads
 │   ├── tv/            ← Sonarr downloads, Plex/Jellyfin reads

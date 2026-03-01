@@ -6,13 +6,13 @@
   ];
 
   # ---------- Hostname ----------
-  networking.hostName = "node3";
+  networking.hostName = "json-lab-2";
 
   # ---------- Static IP ----------
   networking.interfaces.enp1s0 = {
     useDHCP = false;
     ipv4.addresses = [{
-      address = "192.168.1.12";
+      address = "192.168.124.11";
       prefixLength = 24;
     }];
   };
@@ -21,10 +21,10 @@
   homelab.k3s = {
     enable     = true;
     role       = "agent";
-    serverAddr = "https://192.168.1.10:6443";
+    serverAddr = "https://192.168.124.10:6443";
     tokenFile  = "/etc/k3s/token";
     extraFlags = [
-      "--node-ip=192.168.1.12"
+      "--node-ip=192.168.124.11"
     ];
   };
 }
