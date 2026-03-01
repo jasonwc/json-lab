@@ -12,7 +12,15 @@
   boot.loader.efi.canTouchEfiVariables = true;
 
   # ---------- Kernel ----------
-  boot.kernelModules = [ "br_netfilter" "overlay" ];
+  # The in-kernel r8169 does not reliably bring up the RTL8125 NIC on these
+  # GMKTek boxes.  Use Realtek's out-of-tree r8125 driver instead and blacklist
+  # r8169 so it doesn't race.  The nixpkgs r8125 package is marked "broken"
+  # (maintainers consider r8169 sufficient), so we override that flag.
+  boot.extraModulePackages = with config.boot.kernelPackages; [
+    (r8125.overrideAttrs (old: { meta = old.meta // { broken = false; }; }))
+  ];
+  boot.blacklistedKernelModules = [ "r8169" ];
+  boot.kernelModules = [ "br_netfilter" "overlay" "r8125" ];
 
   boot.kernel.sysctl = {
     "net.bridge.bridge-nf-call-iptables"  = 1;
