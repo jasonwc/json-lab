@@ -52,8 +52,8 @@ Ensure the cluster nodes always get the same IPs.
 
 | Hostname | MAC Address | IP |
 |----------|-------------|-----|
-| json-lab-1 | `XX:XX:XX:XX:XX:XX` | 192.168.124.10 |
-| json-lab-2 | `XX:XX:XX:XX:XX:XX` | 192.168.124.11 |
+| json-lab-1 | `84:47:09:77:d2:6c` | 192.168.124.10 |
+| json-lab-2 | `84:47:09:77:d6:e6` | 192.168.124.11 |
 | json-lab-3 | `XX:XX:XX:XX:XX:XX` | 192.168.124.12 |
 
 **Firewalla App:** Devices → select node → Network → Reserve IP Address.
