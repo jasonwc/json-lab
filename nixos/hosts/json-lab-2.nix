@@ -2,6 +2,7 @@
 
 {
   imports = [
+    ./hardware-json-lab-2.nix
     ../modules/k3s.nix
   ];
 
