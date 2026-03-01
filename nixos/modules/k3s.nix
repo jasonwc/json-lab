@@ -49,6 +49,7 @@ in
         10250  # kubelet
         2379   # etcd client (server nodes)
         2380   # etcd peer   (server nodes)
+        9100   # node-exporter (Prometheus scraping)
       ];
       allowedUDPPorts = [
         8472   # flannel VXLAN
