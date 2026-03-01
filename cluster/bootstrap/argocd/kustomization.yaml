@@ -7,3 +7,6 @@ resources:
   - namespace.yaml
   - install.yaml
   - ingress.yaml
+
+patches:
+  - path: patch-argocd-server-insecure.yaml
