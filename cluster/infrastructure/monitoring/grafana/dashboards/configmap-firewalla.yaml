@@ -1,0 +1,358 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-firewalla
+  namespace: monitoring
+  labels:
+    grafana_dashboard: "true"
+data:
+  firewalla.json: |
+    {
+      "annotations": { "list": [] },
+      "editable": true,
+      "graphTooltip": 1,
+      "links": [],
+      "panels": [
+        {
+          "title": "CPU Usage",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+          "datasource": { "type": "prometheus" },
+          "fieldConfig": {
+            "defaults": { "unit": "percentunit", "min": 0, "max": 1 },
+            "overrides": []
+          },
+          "options": {
+            "tooltip": { "mode": "multi" },
+            "legend": { "displayMode": "table", "calcs": ["mean", "lastNotNull"] }
+          },
+          "targets": [
+            {
+              "expr": "1 - avg(rate(node_cpu_seconds_total{job=\"firewalla\",mode=\"idle\"}[5m]))",
+              "legendFormat": "CPU Total"
+            },
+            {
+              "expr": "avg(rate(node_cpu_seconds_total{job=\"firewalla\",mode=\"system\"}[5m]))",
+              "legendFormat": "System"
+            },
+            {
+              "expr": "avg(rate(node_cpu_seconds_total{job=\"firewalla\",mode=\"user\"}[5m]))",
+              "legendFormat": "User"
+            },
+            {
+              "expr": "avg(rate(node_cpu_seconds_total{job=\"firewalla\",mode=\"softirq\"}[5m]))",
+              "legendFormat": "SoftIRQ (network)"
+            }
+          ]
+        },
+        {
+          "title": "Memory Usage",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+          "datasource": { "type": "prometheus" },
+          "fieldConfig": {
+            "defaults": { "unit": "bytes" },
+            "overrides": []
+          },
+          "options": {
+            "tooltip": { "mode": "multi" },
+            "legend": { "displayMode": "table", "calcs": ["lastNotNull"] }
+          },
+          "targets": [
+            {
+              "expr": "node_memory_MemTotal_bytes{job=\"firewalla\"}",
+              "legendFormat": "Total"
+            },
+            {
+              "expr": "node_memory_MemTotal_bytes{job=\"firewalla\"} - node_memory_MemAvailable_bytes{job=\"firewalla\"}",
+              "legendFormat": "Used"
+            },
+            {
+              "expr": "node_memory_Cached_bytes{job=\"firewalla\"}",
+              "legendFormat": "Cached"
+            },
+            {
+              "expr": "node_memory_Buffers_bytes{job=\"firewalla\"}",
+              "legendFormat": "Buffers"
+            }
+          ]
+        },
+        {
+          "title": "Temperature",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+          "datasource": { "type": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "celsius",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "yellow", "value": 75 },
+                  { "color": "red", "value": 90 }
+                ]
+              },
+              "custom": { "thresholdsStyle": { "mode": "line" } }
+            },
+            "overrides": []
+          },
+          "options": {
+            "tooltip": { "mode": "multi" },
+            "legend": { "displayMode": "table", "calcs": ["mean", "lastNotNull", "max"] }
+          },
+          "targets": [
+            {
+              "expr": "node_hwmon_temp_celsius{job=\"firewalla\",chip=\"platform_coretemp_0\",sensor=\"temp1\"}",
+              "legendFormat": "CPU Package"
+            },
+            {
+              "expr": "max(node_hwmon_temp_celsius{job=\"firewalla\",chip=\"platform_coretemp_0\",sensor=~\"temp[2-9]\"})",
+              "legendFormat": "CPU Core Max"
+            },
+            {
+              "expr": "node_hwmon_temp_celsius{job=\"firewalla\",chip=\"platform_nct6775_2592\",sensor=\"temp3\"}",
+              "legendFormat": "Board"
+            },
+            {
+              "expr": "max(node_hwmon_temp_celsius{job=\"firewalla\",chip=~\"0000.*\"})",
+              "legendFormat": "NIC Max"
+            }
+          ]
+        },
+        {
+          "title": "Fan Speed",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 6, "x": 12, "y": 8 },
+          "datasource": { "type": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "rpm",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "red", "value": null },
+                  { "color": "green", "value": 1000 }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": { "graphMode": "area", "textMode": "value_and_name" },
+          "targets": [
+            {
+              "expr": "node_hwmon_fan_rpm{job=\"firewalla\",sensor=\"fan1\"}",
+              "legendFormat": "Fan 1"
+            }
+          ]
+        },
+        {
+          "title": "System Info",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 6, "x": 18, "y": 8 },
+          "datasource": { "type": "prometheus" },
+          "fieldConfig": {
+            "defaults": { "unit": "s" },
+            "overrides": []
+          },
+          "options": { "graphMode": "none", "textMode": "value_and_name" },
+          "targets": [
+            {
+              "expr": "node_time_seconds{job=\"firewalla\"} - node_boot_time_seconds{job=\"firewalla\"}",
+              "legendFormat": "Uptime"
+            }
+          ]
+        },
+        {
+          "title": "Connection Tracking",
+          "type": "timeseries",
+          "gridPos": { "h": 4, "w": 12, "x": 12, "y": 12 },
+          "datasource": { "type": "prometheus" },
+          "fieldConfig": {
+            "defaults": { "unit": "short" },
+            "overrides": []
+          },
+          "options": {
+            "tooltip": { "mode": "multi" },
+            "legend": { "displayMode": "table", "calcs": ["lastNotNull"] }
+          },
+          "targets": [
+            {
+              "expr": "node_nf_conntrack_entries{job=\"firewalla\"}",
+              "legendFormat": "Active Connections"
+            },
+            {
+              "expr": "node_nf_conntrack_entries_limit{job=\"firewalla\"}",
+              "legendFormat": "Max Limit"
+            }
+          ]
+        },
+        {
+          "title": "WAN Throughput (eth0)",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
+          "datasource": { "type": "prometheus" },
+          "fieldConfig": {
+            "defaults": { "unit": "Bps" },
+            "overrides": [
+              {
+                "matcher": { "id": "byRegexp", "options": ".*TX.*" },
+                "properties": [{ "id": "custom.transform", "value": "negative-Y" }]
+              }
+            ]
+          },
+          "options": {
+            "tooltip": { "mode": "multi" },
+            "legend": { "displayMode": "table", "calcs": ["mean", "lastNotNull", "max"] }
+          },
+          "targets": [
+            {
+              "expr": "rate(node_network_receive_bytes_total{job=\"firewalla\",device=\"eth0\"}[5m])",
+              "legendFormat": "RX (Download)"
+            },
+            {
+              "expr": "rate(node_network_transmit_bytes_total{job=\"firewalla\",device=\"eth0\"}[5m])",
+              "legendFormat": "TX (Upload)"
+            }
+          ]
+        },
+        {
+          "title": "LAN Throughput (br0)",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 },
+          "datasource": { "type": "prometheus" },
+          "fieldConfig": {
+            "defaults": { "unit": "Bps" },
+            "overrides": [
+              {
+                "matcher": { "id": "byRegexp", "options": ".*TX.*" },
+                "properties": [{ "id": "custom.transform", "value": "negative-Y" }]
+              }
+            ]
+          },
+          "options": {
+            "tooltip": { "mode": "multi" },
+            "legend": { "displayMode": "table", "calcs": ["mean", "lastNotNull", "max"] }
+          },
+          "targets": [
+            {
+              "expr": "rate(node_network_receive_bytes_total{job=\"firewalla\",device=\"br0\"}[5m])",
+              "legendFormat": "RX"
+            },
+            {
+              "expr": "rate(node_network_transmit_bytes_total{job=\"firewalla\",device=\"br0\"}[5m])",
+              "legendFormat": "TX"
+            }
+          ]
+        },
+        {
+          "title": "Per-Port Throughput",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 24 },
+          "datasource": { "type": "prometheus" },
+          "fieldConfig": {
+            "defaults": { "unit": "Bps" },
+            "overrides": []
+          },
+          "options": {
+            "tooltip": { "mode": "multi" },
+            "legend": { "displayMode": "table", "calcs": ["mean", "lastNotNull"] }
+          },
+          "targets": [
+            {
+              "expr": "rate(node_network_receive_bytes_total{job=\"firewalla\",device=~\"eth[0-3]\"}[5m])",
+              "legendFormat": "{{device}} RX"
+            },
+            {
+              "expr": "-rate(node_network_transmit_bytes_total{job=\"firewalla\",device=~\"eth[0-3]\"}[5m])",
+              "legendFormat": "{{device}} TX"
+            }
+          ]
+        },
+        {
+          "title": "VPN Throughput",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 24 },
+          "datasource": { "type": "prometheus" },
+          "fieldConfig": {
+            "defaults": { "unit": "Bps" },
+            "overrides": []
+          },
+          "options": {
+            "tooltip": { "mode": "multi" },
+            "legend": { "displayMode": "table", "calcs": ["mean", "lastNotNull"] }
+          },
+          "targets": [
+            {
+              "expr": "rate(node_network_receive_bytes_total{job=\"firewalla\",device=~\"wg.*|tun.*|vpn.*\"}[5m])",
+              "legendFormat": "{{device}} RX"
+            },
+            {
+              "expr": "-rate(node_network_transmit_bytes_total{job=\"firewalla\",device=~\"wg.*|tun.*|vpn.*\"}[5m])",
+              "legendFormat": "{{device}} TX"
+            }
+          ]
+        },
+        {
+          "title": "Network Errors & Drops",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 32 },
+          "datasource": { "type": "prometheus" },
+          "fieldConfig": {
+            "defaults": { "unit": "short" },
+            "overrides": []
+          },
+          "options": {
+            "tooltip": { "mode": "multi" },
+            "legend": { "displayMode": "table", "calcs": ["lastNotNull"] }
+          },
+          "targets": [
+            {
+              "expr": "rate(node_network_receive_drop_total{job=\"firewalla\",device=~\"eth[0-3]|br0\"}[5m])",
+              "legendFormat": "{{device}} RX drops"
+            },
+            {
+              "expr": "rate(node_network_transmit_drop_total{job=\"firewalla\",device=~\"eth[0-3]|br0\"}[5m])",
+              "legendFormat": "{{device}} TX drops"
+            },
+            {
+              "expr": "rate(node_network_receive_errs_total{job=\"firewalla\",device=~\"eth[0-3]|br0\"}[5m])",
+              "legendFormat": "{{device}} RX errors"
+            }
+          ]
+        },
+        {
+          "title": "Disk I/O",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 32 },
+          "datasource": { "type": "prometheus" },
+          "fieldConfig": {
+            "defaults": { "unit": "Bps" },
+            "overrides": []
+          },
+          "options": {
+            "tooltip": { "mode": "multi" },
+            "legend": { "displayMode": "table", "calcs": ["mean", "lastNotNull"] }
+          },
+          "targets": [
+            {
+              "expr": "rate(node_disk_read_bytes_total{job=\"firewalla\",device=~\"sd.*|nvme.*|mmcblk.*\"}[5m])",
+              "legendFormat": "{{device}} read"
+            },
+            {
+              "expr": "-rate(node_disk_written_bytes_total{job=\"firewalla\",device=~\"sd.*|nvme.*|mmcblk.*\"}[5m])",
+              "legendFormat": "{{device}} write"
+            }
+          ]
+        }
+      ],
+      "schemaVersion": 39,
+      "tags": ["firewalla", "infrastructure", "network"],
+      "templating": { "list": [] },
+      "time": { "from": "now-3h", "to": "now" },
+      "timepicker": {},
+      "timezone": "",
+      "title": "Firewalla Gold Pro",
+      "uid": "firewalla",
+      "version": 1
+    }

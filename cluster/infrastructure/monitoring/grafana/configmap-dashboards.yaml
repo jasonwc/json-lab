@@ -23,3 +23,11 @@ data:
         editable: true
         options:
           path: /etc/grafana/dashboards/media-stack
+      - name: firewalla
+        orgId: 1
+        folder: 'Infrastructure'
+        type: file
+        disableDeletion: false
+        editable: true
+        options:
+          path: /etc/grafana/dashboards/firewalla

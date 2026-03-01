@@ -28,3 +28,4 @@ resources:
   - grafana/configmap-dashboards.yaml
   - grafana/dashboards/configmap-cluster-overview.yaml
   - grafana/dashboards/configmap-media-stack.yaml
+  - grafana/dashboards/configmap-firewalla.yaml

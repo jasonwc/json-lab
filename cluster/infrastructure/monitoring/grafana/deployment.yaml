@@ -40,6 +40,8 @@ spec:
               mountPath: /etc/grafana/dashboards/cluster-overview
             - name: dashboard-media-stack
               mountPath: /etc/grafana/dashboards/media-stack
+            - name: dashboard-firewalla
+              mountPath: /etc/grafana/dashboards/firewalla
           resources:
             requests:
               cpu: 100m
@@ -72,6 +74,9 @@ spec:
         - name: dashboard-media-stack
           configMap:
             name: grafana-dashboard-media-stack
+        - name: dashboard-firewalla
+          configMap:
+            name: grafana-dashboard-firewalla
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
