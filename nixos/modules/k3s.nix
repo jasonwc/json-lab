@@ -37,7 +37,7 @@ in
       role   = cfg.role;
 
       serverAddr = lib.mkIf (cfg.serverAddr != "") cfg.serverAddr;
-      tokenFile  = cfg.tokenFile;
+      tokenFile  = lib.mkIf (cfg.role == "agent") cfg.tokenFile;
 
       extraFlags = lib.concatStringsSep " " cfg.extraFlags;
     };
