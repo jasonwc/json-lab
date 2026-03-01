@@ -34,6 +34,25 @@ spec:
             requests:
               cpu: 250m
               memory: 256Mi
+        - name: exportarr
+          image: ghcr.io/onedr0p/exportarr:latest
+          args: ["prowlarr"]
+          ports:
+            - containerPort: 9709
+          env:
+            - name: PORT
+              value: "9709"
+            - name: URL
+              value: "http://localhost:9696"
+            - name: APIKEY
+              valueFrom:
+                secretKeyRef:
+                  name: exportarr-api-keys
+                  key: PROWLARR_API_KEY
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
       volumes:
         - name: config
           persistentVolumeClaim:

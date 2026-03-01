@@ -10,6 +10,11 @@ spec:
   selector:
     app: prowlarr
   ports:
-    - port: 9696
+    - name: http
+      port: 9696
       targetPort: 9696
+      protocol: TCP
+    - name: metrics
+      port: 9709
+      targetPort: 9709
       protocol: TCP

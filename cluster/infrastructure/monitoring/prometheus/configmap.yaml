@@ -88,16 +88,16 @@ data:
             regex: "10254"
             action: keep
 
-      ## Phase 2: exportarr sidecars (uncomment after creating API key secrets)
-      # - job_name: sonarr
-      #   static_configs:
-      #     - targets: ['sonarr.media.svc:9707']
-      # - job_name: radarr
-      #   static_configs:
-      #     - targets: ['radarr.media.svc:9708']
-      # - job_name: prowlarr
-      #   static_configs:
-      #     - targets: ['prowlarr.media.svc:9709']
-      # - job_name: qbittorrent
-      #   static_configs:
-      #     - targets: ['qbittorrent-exporter.media.svc:9561']
+      # Media stack exporters
+      - job_name: sonarr
+        static_configs:
+          - targets: ['sonarr.media.svc:9707']
+      - job_name: radarr
+        static_configs:
+          - targets: ['radarr.media.svc:9708']
+      - job_name: prowlarr
+        static_configs:
+          - targets: ['prowlarr.media.svc:9709']
+      - job_name: qbittorrent
+        static_configs:
+          - targets: ['qbittorrent-exporter.media.svc:8000']

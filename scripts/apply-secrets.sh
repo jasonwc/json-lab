@@ -37,6 +37,18 @@ else
   echo "  Skipped (PLEX_CLAIM not set — get one from https://plex.tv/claim)"
 fi
 
+echo "--- Exportarr API keys (Prometheus monitoring) ---"
+if [ -n "${SONARR_API_KEY:-}" ] && [ -n "${RADARR_API_KEY:-}" ] && [ -n "${PROWLARR_API_KEY:-}" ]; then
+  kubectl -n "$NAMESPACE" create secret generic exportarr-api-keys \
+    --from-literal=SONARR_API_KEY="$SONARR_API_KEY" \
+    --from-literal=RADARR_API_KEY="$RADARR_API_KEY" \
+    --from-literal=PROWLARR_API_KEY="$PROWLARR_API_KEY" \
+    --dry-run=client -o yaml | kubectl apply -f -
+  echo "  Applied exportarr-api-keys secret"
+else
+  echo "  Skipped (set SONARR_API_KEY, RADARR_API_KEY, PROWLARR_API_KEY in .envrc)"
+fi
+
 echo ""
 echo "=== Monitoring namespace ==="
 kubectl create namespace monitoring --dry-run=client -o yaml | kubectl apply -f -

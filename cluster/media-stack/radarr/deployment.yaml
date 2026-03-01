@@ -36,6 +36,25 @@ spec:
             requests:
               cpu: 250m
               memory: 512Mi
+        - name: exportarr
+          image: ghcr.io/onedr0p/exportarr:latest
+          args: ["radarr"]
+          ports:
+            - containerPort: 9708
+          env:
+            - name: PORT
+              value: "9708"
+            - name: URL
+              value: "http://localhost:7878"
+            - name: APIKEY
+              valueFrom:
+                secretKeyRef:
+                  name: exportarr-api-keys
+                  key: RADARR_API_KEY
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
       volumes:
         - name: media
           persistentVolumeClaim:

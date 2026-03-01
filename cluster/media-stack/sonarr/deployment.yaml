@@ -36,6 +36,25 @@ spec:
             requests:
               cpu: 250m
               memory: 512Mi
+        - name: exportarr
+          image: ghcr.io/onedr0p/exportarr:latest
+          args: ["sonarr"]
+          ports:
+            - containerPort: 9707
+          env:
+            - name: PORT
+              value: "9707"
+            - name: URL
+              value: "http://localhost:8989"
+            - name: APIKEY
+              valueFrom:
+                secretKeyRef:
+                  name: exportarr-api-keys
+                  key: SONARR_API_KEY
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
       volumes:
         - name: media
           persistentVolumeClaim:
