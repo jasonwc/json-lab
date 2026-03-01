@@ -36,6 +36,10 @@ spec:
               mountPath: /etc/grafana/provisioning/dashboards
             - name: data
               mountPath: /var/lib/grafana
+            - name: dashboard-cluster-overview
+              mountPath: /etc/grafana/dashboards/cluster-overview
+            - name: dashboard-media-stack
+              mountPath: /etc/grafana/dashboards/media-stack
           resources:
             requests:
               cpu: 100m
@@ -62,6 +66,12 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: grafana-data
+        - name: dashboard-cluster-overview
+          configMap:
+            name: grafana-dashboard-cluster-overview
+        - name: dashboard-media-stack
+          configMap:
+            name: grafana-dashboard-media-stack
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

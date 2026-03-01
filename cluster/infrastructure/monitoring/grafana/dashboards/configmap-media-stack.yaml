@@ -1,0 +1,340 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-media-stack
+  namespace: monitoring
+  labels:
+    grafana_dashboard: "true"
+data:
+  media-stack.json: |
+    {
+      "annotations": { "list": [] },
+      "editable": true,
+      "fiscalYearStartMonth": 0,
+      "graphTooltip": 1,
+      "links": [],
+      "panels": [
+        {
+          "title": "Sonarr",
+          "type": "row",
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+          "collapsed": false
+        },
+        {
+          "title": "Series Total",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 4, "x": 0, "y": 1 },
+          "datasource": { "type": "prometheus" },
+          "fieldConfig": { "defaults": {}, "overrides": [] },
+          "options": { "graphMode": "none", "textMode": "value" },
+          "targets": [{ "expr": "sonarr_series_total", "legendFormat": "Total" }]
+        },
+        {
+          "title": "Episodes Downloaded",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 4, "x": 4, "y": 1 },
+          "datasource": { "type": "prometheus" },
+          "fieldConfig": { "defaults": { "color": { "mode": "fixed", "fixedColor": "green" } }, "overrides": [] },
+          "options": { "graphMode": "none", "textMode": "value" },
+          "targets": [{ "expr": "sonarr_episode_downloaded_total", "legendFormat": "Downloaded" }]
+        },
+        {
+          "title": "Episodes Missing",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 4, "x": 8, "y": 1 },
+          "datasource": { "type": "prometheus" },
+          "fieldConfig": { "defaults": { "color": { "mode": "fixed", "fixedColor": "orange" } }, "overrides": [] },
+          "options": { "graphMode": "none", "textMode": "value" },
+          "targets": [{ "expr": "sonarr_episode_missing_total", "legendFormat": "Missing" }]
+        },
+        {
+          "title": "Queue",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 4, "x": 12, "y": 1 },
+          "datasource": { "type": "prometheus" },
+          "fieldConfig": { "defaults": { "color": { "mode": "fixed", "fixedColor": "blue" } }, "overrides": [] },
+          "options": { "graphMode": "none", "textMode": "value" },
+          "targets": [{ "expr": "sonarr_queue_total", "legendFormat": "Queue" }]
+        },
+        {
+          "title": "Disk Free (Root Folder)",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 4, "x": 16, "y": 1 },
+          "datasource": { "type": "prometheus" },
+          "fieldConfig": { "defaults": { "unit": "bytes" }, "overrides": [] },
+          "options": { "graphMode": "none", "textMode": "value" },
+          "targets": [{ "expr": "sonarr_rootfolder_freespace_bytes", "legendFormat": "Free" }]
+        },
+        {
+          "title": "Health Issues",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 4, "x": 20, "y": 1 },
+          "datasource": { "type": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "thresholds": {
+                "steps": [
+                  { "value": null, "color": "green" },
+                  { "value": 1, "color": "red" }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": { "graphMode": "none", "textMode": "value", "colorMode": "value" },
+          "targets": [{ "expr": "sonarr_system_health_issues", "legendFormat": "Issues" }]
+        },
+        {
+          "title": "Radarr",
+          "type": "row",
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 5 },
+          "collapsed": false
+        },
+        {
+          "title": "Movies Total",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 4, "x": 0, "y": 6 },
+          "datasource": { "type": "prometheus" },
+          "fieldConfig": { "defaults": {}, "overrides": [] },
+          "options": { "graphMode": "none", "textMode": "value" },
+          "targets": [{ "expr": "radarr_movie_total", "legendFormat": "Total" }]
+        },
+        {
+          "title": "Movies Downloaded",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 4, "x": 4, "y": 6 },
+          "datasource": { "type": "prometheus" },
+          "fieldConfig": { "defaults": { "color": { "mode": "fixed", "fixedColor": "green" } }, "overrides": [] },
+          "options": { "graphMode": "none", "textMode": "value" },
+          "targets": [{ "expr": "radarr_movie_downloaded_total", "legendFormat": "Downloaded" }]
+        },
+        {
+          "title": "Movies Missing",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 4, "x": 8, "y": 6 },
+          "datasource": { "type": "prometheus" },
+          "fieldConfig": { "defaults": { "color": { "mode": "fixed", "fixedColor": "orange" } }, "overrides": [] },
+          "options": { "graphMode": "none", "textMode": "value" },
+          "targets": [{ "expr": "radarr_movie_missing_total", "legendFormat": "Missing" }]
+        },
+        {
+          "title": "Queue",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 4, "x": 12, "y": 6 },
+          "datasource": { "type": "prometheus" },
+          "fieldConfig": { "defaults": { "color": { "mode": "fixed", "fixedColor": "blue" } }, "overrides": [] },
+          "options": { "graphMode": "none", "textMode": "value" },
+          "targets": [{ "expr": "radarr_queue_total", "legendFormat": "Queue" }]
+        },
+        {
+          "title": "Disk Free (Root Folder)",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 4, "x": 16, "y": 6 },
+          "datasource": { "type": "prometheus" },
+          "fieldConfig": { "defaults": { "unit": "bytes" }, "overrides": [] },
+          "options": { "graphMode": "none", "textMode": "value" },
+          "targets": [{ "expr": "radarr_rootfolder_freespace_bytes", "legendFormat": "Free" }]
+        },
+        {
+          "title": "Health Issues",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 4, "x": 20, "y": 6 },
+          "datasource": { "type": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "thresholds": {
+                "steps": [
+                  { "value": null, "color": "green" },
+                  { "value": 1, "color": "red" }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": { "graphMode": "none", "textMode": "value", "colorMode": "value" },
+          "targets": [{ "expr": "radarr_system_health_issues", "legendFormat": "Issues" }]
+        },
+        {
+          "title": "Prowlarr",
+          "type": "row",
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 10 },
+          "collapsed": false
+        },
+        {
+          "title": "Indexers",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 4, "x": 0, "y": 11 },
+          "datasource": { "type": "prometheus" },
+          "fieldConfig": { "defaults": {}, "overrides": [] },
+          "options": { "graphMode": "none", "textMode": "value" },
+          "targets": [{ "expr": "prowlarr_indexer_total", "legendFormat": "Total" }]
+        },
+        {
+          "title": "Enabled Indexers",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 4, "x": 4, "y": 11 },
+          "datasource": { "type": "prometheus" },
+          "fieldConfig": { "defaults": { "color": { "mode": "fixed", "fixedColor": "green" } }, "overrides": [] },
+          "options": { "graphMode": "none", "textMode": "value" },
+          "targets": [{ "expr": "prowlarr_indexer_enabled_total", "legendFormat": "Enabled" }]
+        },
+        {
+          "title": "Total Queries",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 4, "x": 8, "y": 11 },
+          "datasource": { "type": "prometheus" },
+          "fieldConfig": { "defaults": {}, "overrides": [] },
+          "options": { "graphMode": "none", "textMode": "value" },
+          "targets": [{ "expr": "prowlarr_indexer_queries_total", "legendFormat": "Queries" }]
+        },
+        {
+          "title": "Total Grabs",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 4, "x": 12, "y": 11 },
+          "datasource": { "type": "prometheus" },
+          "fieldConfig": { "defaults": {}, "overrides": [] },
+          "options": { "graphMode": "none", "textMode": "value" },
+          "targets": [{ "expr": "prowlarr_indexer_grabs_total", "legendFormat": "Grabs" }]
+        },
+        {
+          "title": "Failed Queries",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 4, "x": 16, "y": 11 },
+          "datasource": { "type": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "thresholds": {
+                "steps": [
+                  { "value": null, "color": "green" },
+                  { "value": 1, "color": "orange" }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": { "graphMode": "none", "textMode": "value", "colorMode": "value" },
+          "targets": [{ "expr": "prowlarr_indexer_failed_queries_total", "legendFormat": "Failed" }]
+        },
+        {
+          "title": "Avg Response Time",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 4, "x": 20, "y": 11 },
+          "datasource": { "type": "prometheus" },
+          "fieldConfig": { "defaults": { "unit": "ms" }, "overrides": [] },
+          "options": { "graphMode": "none", "textMode": "value" },
+          "targets": [{ "expr": "prowlarr_indexer_average_response_time_ms", "legendFormat": "Avg" }]
+        },
+        {
+          "title": "qBittorrent",
+          "type": "row",
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 15 },
+          "collapsed": false
+        },
+        {
+          "title": "Connected",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 3, "x": 0, "y": 16 },
+          "datasource": { "type": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "mappings": [
+                { "type": "value", "options": { "1": { "text": "Yes", "color": "green" }, "0": { "text": "No", "color": "red" } } }
+              ]
+            },
+            "overrides": []
+          },
+          "options": { "graphMode": "none", "textMode": "value", "colorMode": "value" },
+          "targets": [{ "expr": "qbittorrent_connected", "legendFormat": "Connected" }]
+        },
+        {
+          "title": "Active Torrents",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 3, "x": 3, "y": 16 },
+          "datasource": { "type": "prometheus" },
+          "fieldConfig": { "defaults": {}, "overrides": [] },
+          "options": { "graphMode": "none", "textMode": "value" },
+          "targets": [{ "expr": "qbittorrent_torrents_count", "legendFormat": "Torrents" }]
+        },
+        {
+          "title": "Peer Connections",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 3, "x": 6, "y": 16 },
+          "datasource": { "type": "prometheus" },
+          "fieldConfig": { "defaults": {}, "overrides": [] },
+          "options": { "graphMode": "none", "textMode": "value" },
+          "targets": [{ "expr": "qbittorrent_total_peer_connections", "legendFormat": "Peers" }]
+        },
+        {
+          "title": "DHT Nodes",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 3, "x": 9, "y": 16 },
+          "datasource": { "type": "prometheus" },
+          "fieldConfig": { "defaults": {}, "overrides": [] },
+          "options": { "graphMode": "none", "textMode": "value" },
+          "targets": [{ "expr": "qbittorrent_dht_nodes", "legendFormat": "DHT" }]
+        },
+        {
+          "title": "All-time Downloaded",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 3, "x": 12, "y": 16 },
+          "datasource": { "type": "prometheus" },
+          "fieldConfig": { "defaults": { "unit": "bytes" }, "overrides": [] },
+          "options": { "graphMode": "none", "textMode": "value" },
+          "targets": [{ "expr": "qbittorrent_alltime_dl_total", "legendFormat": "Downloaded" }]
+        },
+        {
+          "title": "All-time Uploaded",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 3, "x": 15, "y": 16 },
+          "datasource": { "type": "prometheus" },
+          "fieldConfig": { "defaults": { "unit": "bytes" }, "overrides": [] },
+          "options": { "graphMode": "none", "textMode": "value" },
+          "targets": [{ "expr": "qbittorrent_alltime_ul_total", "legendFormat": "Uploaded" }]
+        },
+        {
+          "title": "Download / Upload Speed",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 20 },
+          "datasource": { "type": "prometheus" },
+          "fieldConfig": {
+            "defaults": { "unit": "Bps" },
+            "overrides": []
+          },
+          "options": {
+            "tooltip": { "mode": "multi" },
+            "legend": { "displayMode": "table", "calcs": ["mean", "max", "lastNotNull"] }
+          },
+          "targets": [
+            { "expr": "rate(qbittorrent_dl_info_data_total[5m])", "legendFormat": "Download" },
+            { "expr": "rate(qbittorrent_up_info_data_total[5m])", "legendFormat": "Upload" }
+          ]
+        },
+        {
+          "title": "Sonarr / Radarr Library Over Time",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 20 },
+          "datasource": { "type": "prometheus" },
+          "fieldConfig": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "tooltip": { "mode": "multi" },
+            "legend": { "displayMode": "table", "calcs": ["lastNotNull"] }
+          },
+          "targets": [
+            { "expr": "sonarr_episode_downloaded_total", "legendFormat": "Sonarr Episodes" },
+            { "expr": "radarr_movie_downloaded_total", "legendFormat": "Radarr Movies" }
+          ]
+        }
+      ],
+      "schemaVersion": 39,
+      "tags": ["media"],
+      "templating": { "list": [] },
+      "time": { "from": "now-1h", "to": "now" },
+      "timepicker": {},
+      "timezone": "",
+      "title": "Media Stack",
+      "uid": "media-stack",
+      "version": 1
+    }

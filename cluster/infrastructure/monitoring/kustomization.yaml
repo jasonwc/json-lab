@@ -26,3 +26,5 @@ resources:
   - grafana/ingress.yaml
   - grafana/configmap-datasources.yaml
   - grafana/configmap-dashboards.yaml
+  - grafana/dashboards/configmap-cluster-overview.yaml
+  - grafana/dashboards/configmap-media-stack.yaml

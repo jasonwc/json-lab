@@ -49,6 +49,17 @@ else
   echo "  Skipped (set SONARR_API_KEY, RADARR_API_KEY, PROWLARR_API_KEY in .envrc)"
 fi
 
+echo "--- qBittorrent credentials (exporter) ---"
+if [ -n "${QBITTORRENT_USER:-}" ] && [ -n "${QBITTORRENT_PASS:-}" ]; then
+  kubectl -n "$NAMESPACE" create secret generic qbittorrent-credentials \
+    --from-literal=username="$QBITTORRENT_USER" \
+    --from-literal=password="$QBITTORRENT_PASS" \
+    --dry-run=client -o yaml | kubectl apply -f -
+  echo "  Applied qbittorrent-credentials secret"
+else
+  echo "  Skipped (set QBITTORRENT_USER and QBITTORRENT_PASS in .envrc)"
+fi
+
 echo ""
 echo "=== Monitoring namespace ==="
 kubectl create namespace monitoring --dry-run=client -o yaml | kubectl apply -f -

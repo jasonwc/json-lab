@@ -25,6 +25,16 @@ spec:
               value: "qbittorrent.media.svc.cluster.local"
             - name: QBITTORRENT_PORT
               value: "8080"
+            - name: QBITTORRENT_USER
+              valueFrom:
+                secretKeyRef:
+                  name: qbittorrent-credentials
+                  key: username
+            - name: QBITTORRENT_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: qbittorrent-credentials
+                  key: password
           resources:
             requests:
               cpu: 50m

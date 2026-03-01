@@ -7,12 +7,19 @@ data:
   dashboards.yaml: |
     apiVersion: 1
     providers:
-      - name: default
+      - name: cluster-overview
         orgId: 1
-        folder: ''
+        folder: 'Cluster'
         type: file
         disableDeletion: false
         editable: true
         options:
-          path: /var/lib/grafana/dashboards
-          foldersFromFilesStructure: false
+          path: /etc/grafana/dashboards/cluster-overview
+      - name: media-stack
+        orgId: 1
+        folder: 'Media Stack'
+        type: file
+        disableDeletion: false
+        editable: true
+        options:
+          path: /etc/grafana/dashboards/media-stack
