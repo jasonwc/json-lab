@@ -163,7 +163,7 @@ imports = [
 ip link
 ```
 
-If the ethernet interface is NOT `enp1s0`, update the node's nix config to match the actual interface name.
+If the ethernet interface is NOT `eno1`, update the node's nix config to match the actual interface name.
 
 ### 7c. Add your SSH public key
 
@@ -200,11 +200,11 @@ sudo reboot
 After reboot, the r8125 driver should load and the ethernet NIC will be available. Verify:
 
 ```bash
-ip link  # look for the ethernet interface (e.g. enp1s0)
+ip link  # look for the ethernet interface (e.g. eno1)
 ip addr  # confirm the static IP is assigned
 ```
 
-If the ethernet interface name is NOT `enp1s0`, update the node's nix config to match, commit, and re-run `nixos-rebuild switch`.
+If the ethernet interface name is NOT `eno1`, update the node's nix config to match, commit, and re-run `nixos-rebuild switch`.
 
 **Important:** After this deploy, SSH password auth is disabled. Make sure your SSH key was added to `common.nix` before deploying, or you'll need physical access to recover.
 
@@ -269,6 +269,22 @@ sudo nixos-rebuild switch --flake ./nixos#json-lab-3
 
 And copy the same k3s token to `/etc/k3s/token`.
 
+## Kubeconfig Setup (json-mini)
+
+After json-lab-1 is running, copy the kubeconfig to your dev machine so you can manage the cluster remotely:
+
+```bash
+# From json-mini
+mkdir -p ~/.kube
+scp jasonwc@192.168.124.10:/etc/rancher/k3s/k3s.yaml ~/.kube/config
+sed -i 's/127.0.0.1/192.168.124.10/' ~/.kube/config
+
+# Verify
+kubectl get nodes
+```
+
+The kubeconfig is readable without sudo because k3s is configured with `--write-kubeconfig-mode=644`.
+
 ## Verification
 
 After all three nodes are deployed:
@@ -299,7 +315,7 @@ Issues encountered during the initial json-lab-1 install and their solutions.
 
 The GMKTek Mini PCs use a **Realtek RTL8125 2.5GbE** NIC (PCI ID `10ec:8125`). The NixOS installer kernel does not include a working driver for it — the in-kernel `r8169` driver claims the device but does not bring up the interface.
 
-**Workaround:** Use WiFi during installation (`nmcli device wifi connect "SSID" password "pass"`). The flake config includes the out-of-tree `r8125` driver package, so ethernet works after the first `nixos-rebuild switch` and reboot.
+**Workaround:** Use WiFi during installation (`nmcli device wifi connect "SSID" password "pass"`). The flake config includes the out-of-tree `r8125` driver (with the nixpkgs "broken" flag overridden), so ethernet works after the first `nixos-rebuild switch` and reboot. The in-kernel `r8169` is blacklisted to prevent conflicts.
 
 **How we diagnosed it:**
 ```bash
@@ -330,3 +346,24 @@ The drive ships formatted as NTFS. Reformat to ext4 before use:
 ```bash
 sudo mkfs.ext4 -L storage /dev/sda1
 ```
+
+### Ethernet interface is `eno1`, not `eno1`
+
+The r8125 driver names the interface `eno1`. All node configs must use `networking.interfaces.eno1`, not `eno1`. Verify with `ip link` after the first reboot with the flake config.
+
+### k3s server waiting for token file
+
+The k3s module originally passed `tokenFile` to both server and agent roles. The initial server node generates its own token — it doesn't need a token file. Fix: only pass `tokenFile` when `role == "agent"`.
+
+### No WiFi tools after flake deploy
+
+The flake config uses NixOS static networking (not NetworkManager), so `nmcli` and `wpa_supplicant` are not available. If you need WiFi again after deploying the flake, boot into the previous generation from the systemd-boot menu — it still has NetworkManager.
+
+### kubectl "connection refused" on the node
+
+kubectl defaults to `localhost:8080`. k3s writes its kubeconfig to `/etc/rancher/k3s/k3s.yaml`. Use:
+```bash
+export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+sudo -E kubectl get nodes
+```
+Or copy the kubeconfig to json-mini (see "Kubeconfig Setup" above).
