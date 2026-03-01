@@ -9,7 +9,7 @@
   networking.hostName = "json-lab-3";
 
   # ---------- Static IP ----------
-  networking.interfaces.enp1s0 = {
+  networking.interfaces.eno1 = {
     useDHCP = false;
     ipv4.addresses = [{
       address = "192.168.124.12";
