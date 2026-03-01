@@ -11,7 +11,7 @@ data:
     layout:
       Media:
         style: row
-        columns: 4
+        columns: 5
       Downloads:
         style: row
         columns: 3
@@ -42,6 +42,10 @@ data:
             href: http://radarr.json.lab
             icon: radarr.png
             description: Movie management
+        - FileBrowser:
+            href: http://filebrowser.json.lab
+            icon: filebrowser.png
+            description: Media file browser
     - Downloads:
         - qBittorrent:
             href: http://qbittorrent.json.lab
