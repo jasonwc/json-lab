@@ -54,6 +54,50 @@ spec:
           volumeMounts:
             - name: tun-device
               mountPath: /dev/net/tun
+            - name: gluetun-tmp
+              mountPath: /tmp/gluetun
+        - name: port-updater
+          image: curlimages/curl:latest
+          env:
+            - name: QBT_USER
+              valueFrom:
+                secretKeyRef:
+                  name: qbittorrent-credentials
+                  key: username
+            - name: QBT_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: qbittorrent-credentials
+                  key: password
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "Waiting for Gluetun forwarded port..."
+              while [ ! -f /tmp/gluetun/forwarded_port ]; do sleep 5; done
+              CURRENT_PORT=""
+              while true; do
+                PORT=$(cat /tmp/gluetun/forwarded_port 2>/dev/null)
+                if [ -n "$PORT" ] && [ "$PORT" != "$CURRENT_PORT" ]; then
+                  echo "Forwarded port: $PORT — updating qBittorrent..."
+                  sleep 10
+                  SID=$(curl -s -c - "http://localhost:8080/api/v2/auth/login" \
+                    -d "username=$QBT_USER&password=$QBT_PASS" | grep -o 'SID\s.*' | awk '{print $NF}')
+                  if [ -n "$SID" ]; then
+                    curl -s -b "SID=$SID" "http://localhost:8080/api/v2/app/setPreferences" \
+                      -d "json={\"listen_port\":$PORT}"
+                    echo "Updated qBittorrent listen port to $PORT"
+                    CURRENT_PORT="$PORT"
+                  else
+                    echo "Failed to authenticate with qBittorrent, retrying..."
+                  fi
+                fi
+                sleep 30
+              done
+          volumeMounts:
+            - name: gluetun-tmp
+              mountPath: /tmp/gluetun
+              readOnly: true
         - name: qbittorrent
           image: linuxserver/qbittorrent:latest
           env:
@@ -75,6 +119,8 @@ spec:
               cpu: 500m
               memory: 512Mi
       volumes:
+        - name: gluetun-tmp
+          emptyDir: {}
         - name: tun-device
           hostPath:
             path: /dev/net/tun
