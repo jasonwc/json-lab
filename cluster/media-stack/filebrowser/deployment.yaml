@@ -18,6 +18,11 @@ spec:
       containers:
         - name: filebrowser
           image: filebrowser/filebrowser:v2
+          args:
+            - --database=/config/filebrowser.db
+            - --root=/srv
+            - --address=0.0.0.0
+            - --port=80
           ports:
             - containerPort: 80
           volumeMounts:
@@ -26,11 +31,6 @@ spec:
               readOnly: true
             - name: config
               mountPath: /config
-          env:
-            - name: FB_DATABASE
-              value: /config/filebrowser.db
-            - name: FB_ROOT
-              value: /srv
           resources:
             requests:
               cpu: 100m
